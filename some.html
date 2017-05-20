@@ -1,0 +1,34 @@
+﻿<section>
+            <div class="form-group row">
+                <div class="col-xs-4 col-md-2 col-lg-2"> 
+                    <label class="required"</label>
+                </div>
+                <div class="col-xs-4 col-md-2 col-lg-2 start-date-container">
+                     <input id="startDate"                           
+                           name="startDate"
+                           class="navi form-control"
+                           required
+                           disable="true"
+                           min-date-of="endDate"
+                           date-picker="true"
+                           ng-change="$ctrl.compareDates()" 
+                           ng-model="$ctrl.newsFeed.startDate"/>                        
+                           
+                </div>               
+            </div>
+            <div class="form-group row">
+                <div class="col-xs-4 col-md-2 col-lg-2">
+                    <label translate="vbeiEndDate">:</label>
+                </div>
+                <div class="col-xs-4 col-md-2 col-lg-2 end-date-container">
+                    <input id="endDate"                           
+                           name="endDate"
+                           disable="true"
+                           class="navi form-control"
+                           datepicker="true"
+                           max-date-of=""
+                           ng-change="$ctrl.compareDates()"
+                           ng-model="$ctrl.newsFeed.endDate"/>
+                </div>           
+            </div>          
+          </section>
