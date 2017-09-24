@@ -1,0 +1,16 @@
+Try this 
+
+In your Console application
+
+
+ private static void Client_DownLoadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            var response = e.Result;// This will download the uri asynchronically .. No app freeze.
+            
+        }
+        public static void Main()
+        {
+            var client = new WebClient();
+            client.DownloadStringAsync(new System.Uri("http://www.whatisrss.com"));
+            client.DownloadStringCompleted+= Client_DownLoadStringCompleted;
+            
