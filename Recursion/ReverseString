@@ -1,0 +1,32 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace SimpleApp
+{
+public class Program
+    {
+     static void Main(string[] args)
+        {
+            var myRecursionClass = new Recursion();
+            string reversedString = myRecursionClass.reverse("Aashish");
+            Assert.AreEqual("hsihsaA", reversedString);
+        }
+    }
+public class Recursion
+    {
+    public string reverse(string str)
+        {            
+            if (string.IsNullOrEmpty(str) || str.Length <= 1)
+            {
+                return str;
+            }
+            else
+            {
+               return string.Concat(reverse(str.Substring(1)), str[0]);
+            }
+        }
+    }
+}
