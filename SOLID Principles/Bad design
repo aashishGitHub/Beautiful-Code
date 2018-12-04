@@ -1,0 +1,117 @@
+TODO:
+Refactor and Implement SOLID principles in below code
+
+Requirements, 
+1.	Multiple types of logging should be possible. 
+2.	Circle is not save-able, but rectangle and square are.
+3.	All figures must have a way to calculate area.
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        List<Figure> figureList = new List<Figure>();
+
+        Figure rectangle = new Figure()
+        {
+            Height = 3,
+            Width = 4,
+            Type = ShapeType.Rectangle
+        };
+
+        Figure square = new Figure()
+        {
+            Type = ShapeType.Square,
+            Height = 4,
+            Width = 4
+        };
+        
+
+        Figure circle = new Figure()
+        {
+            Type = ShapeType.Circle,
+            Radius = 3.5
+        };
+
+
+        figureList.Add(rectangle);
+        figureList.Add(square);
+
+        figureList.Add(circle);
+
+        foreach (Figure figure in figureList)
+        {
+            Console.WriteLine(figure.CalculateArea());
+            figure.Save();
+        }
+    }
+}
+
+public class Figure
+{
+    public double Height { get; set; }
+    public double Width { get; set; }
+
+    public double Radius { get; set; }
+
+    public ShapeType Type { get; set; }
+
+    public virtual void Save()
+    {
+
+        //save the object to a file
+try{       
+ using (Stream stream = File.Open("saveFile.bin", FileMode.OpenOrCreate))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(stream, this);
+        }
+    }
+}
+catch(FileNotFoundException ex){
+Console.WriteLine(e.ToString());
+
+}
+
+    public virtual double CalculateArea()
+    {
+        return 0;
+    }
+}
+
+
+public class Rectangle : Figure
+{
+   public override double CalculateArea(){
+        return Height * Width;
+
+}
+
+}
+
+public class Square : Figure
+{
+   public override double CalculateArea(){
+         return Height * Height;
+
+}
+}
+
+public class Circle : Figure
+{
+    public override void Save(){
+	
+            throw new Exception("Circle cannot be saved!");
+         }
+  
+     public override double CalculateArea(){
+         return Radius * Radius * Math.PI;
+}
+}
+
+public enum ShapeType
+{
+    Rectangle,
+    Circle,
+    Square
+}
