@@ -1,0 +1,165 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace ConsoleApplication2
+{
+    /// <summary>
+    /// SOLID Principles implementations
+    /// </summary>
+    class Solid
+    {
+        //Dynamically instantiating the Logger implementations, from IOC
+        private static ILogger _filelogger = new FileLogger();
+        private static ILogger _dblogger = new DbLogger();
+
+        static void Main(string[] args)
+        {
+            
+            List<IFigure> figureList = new List<IFigure>();
+            
+            //Implementing Liskov's Substitution principle, by calling method from parent object
+            // Let us log in the File for Rectangle's save()
+            IFigure rectangle = new Rectangle(_filelogger)
+            {
+                Height = 3,
+                Width = 4
+            };
+            
+            // Let us log in the DB for Square's save()
+            IFigure square = new Square(_dblogger)
+            {
+                Height = 4
+            };
+
+            IFigure circle = new Circle()
+            {
+                Radius = 3.5
+            };
+
+            figureList.Add(rectangle);
+            figureList.Add(square);
+            figureList.Add(circle);
+
+
+            foreach (IFigure figure in figureList)
+            {
+                double areaResult = figure.CalculateArea();
+                Console.WriteLine(areaResult);
+
+                if (figure is SaveableFigure)
+                {
+                    (figure as SaveableFigure).Save();
+                }
+            }
+            Console.Read();
+        }
+    }
+
+    interface IFigure
+    {
+        double CalculateArea();
+    }
+      
+
+    public abstract class SaveableFigure : IFigure
+    {
+        private readonly ILogger _logger;
+
+        public SaveableFigure() { }
+        public SaveableFigure(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        public abstract double CalculateArea();
+       
+        public virtual void Save()
+        {
+            // Some saving logic
+            try
+            {             
+                using (Stream stream = File.Open("saveFile.bin", FileMode.OpenOrCreate))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, this);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            catch (Exception)
+            {
+                _logger.Log();
+            }
+        }
+    }
+
+    public class Rectangle : SaveableFigure
+    {        
+        public Rectangle(ILogger _logger): base(_logger){}
+
+        public double Height { get; set; }
+        public double Width { get; set; }
+
+        public override double CalculateArea()
+        {
+            return Height * Width;
+        }
+    }
+
+    public class Square : SaveableFigure
+    {
+
+        public Square(ILogger _logger) : base(_logger) { }
+       
+        public double Height { get; set; }
+
+        public override double CalculateArea()
+        {
+            return Height * Height;
+        }
+    }
+
+    /// <summary>
+    /// This is non saveable figure
+    /// </summary>
+    public class Circle : IFigure
+    {
+        public double Radius { get; set; }
+
+        public double CalculateArea()
+        {
+            return Radius * Radius * Math.PI;
+        }
+    }
+
+    /// <summary>
+    /// This logs
+    /// </summary>
+    public interface ILogger
+    {
+        void Log();
+    }
+
+    public class FileLogger : ILogger
+    {
+        public void Log()
+        {
+            // Logger logic to save in a file
+            Console.WriteLine("Logging to a File");
+        }
+    }
+    public class DbLogger : ILogger
+    {
+        public void Log()
+        {
+            // Logger logic to save in DB
+            Console.WriteLine("Logging to a DB");
+        }
+    }
+}
+
+
